@@ -1,0 +1,32 @@
+# This project is primarily a set of example Java programs 
+# that demonstrate working with MongoDB's GridFS & the metadata field
+# sample images are from: http://www.mongodb.org/downloads
+
+# Compile the sample programs
+javac GridFsStore.java -classpath .:./mongo-java-driver-2.10.1.jar
+javac GridFsRead.java -classpath .:./mongo-java-driver-2.10.1.jar
+
+# make sure mongod is running
+
+# Insert the images into GridFS
+java -classpath .:./mongo-java-driver-2.10.1.jar GridFsStore PoweredMongoDBbeige50.png beige
+java -classpath .:./mongo-java-driver-2.10.1.jar GridFsStore PoweredMongoDBblue50.png  blue  
+java -classpath .:./mongo-java-driver-2.10.1.jar GridFsStore PoweredMongoDBbrown50.png brown
+java -classpath .:./mongo-java-driver-2.10.1.jar GridFsStore PoweredMongoDBgreen50.png green
+
+# set an index on the metadata
+# open a mongo shell, then:
+use imagedb
+db.images.files.find().count() // should be 4
+db.images.files.findOne() // notice the metadata
+db.images.files.ensureIndex({"metadata.color":1})
+db.images.files.getIndexes()  // you should see the new index
+
+# query with explain on index
+db.images.files.find({"metadata.color":"blue"}).explain()
+# the output should include this line: 
+"cursor" : "BtreeCursor metadata.color_1",
+
+# read file out, save as color.png
+java -classpath .:./mongo-java-driver-2.10.1.jar GridFsRead green
+# you should now have a green.png in the current directory
