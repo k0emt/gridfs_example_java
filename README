@@ -3,8 +3,9 @@
 # sample images are from: http://www.mongodb.org/downloads
 
 # Compile the sample programs
-javac GridFsStore.java -classpath .:./mongo-java-driver-2.10.1.jar
 javac GridFsRead.java -classpath .:./mongo-java-driver-2.10.1.jar
+javac GridFsStore.java -classpath .:./mongo-java-driver-2.10.1.jar
+javac GridFsStoreChunk.java -classpath .:./mongo-java-driver-2.10.1.jar
 
 # make sure mongod is running
 
@@ -14,11 +15,17 @@ java -classpath .:./mongo-java-driver-2.10.1.jar GridFsStore PoweredMongoDBblue5
 java -classpath .:./mongo-java-driver-2.10.1.jar GridFsStore PoweredMongoDBbrown50.png brown
 java -classpath .:./mongo-java-driver-2.10.1.jar GridFsStore PoweredMongoDBgreen50.png green
 
+java -classpath .:./mongo-java-driver-2.10.1.jar GridFsStoreChunk PoweredMongoDBbeige50.png chunkbeige
+java -classpath .:./mongo-java-driver-2.10.1.jar GridFsStoreChunk PoweredMongoDBblue50.png  chunkblue  
+java -classpath .:./mongo-java-driver-2.10.1.jar GridFsStoreChunk PoweredMongoDBbrown50.png chunkbrown
+java -classpath .:./mongo-java-driver-2.10.1.jar GridFsStoreChunk PoweredMongoDBgreen50.png chunkgreen
+
 # set an index on the metadata
 # open a mongo shell, then:
 use imagedb
-db.images.files.find().count() // should be 4
-db.images.files.findOne() // notice the metadata
+db.images.files.find().count() // should be 8
+db.images.chunks.find().count() // should be 12 
+db.images.files.findOne() // notice the meta
 db.images.files.ensureIndex({"metadata.color":1})
 db.images.files.getIndexes()  // you should see the new index
 
